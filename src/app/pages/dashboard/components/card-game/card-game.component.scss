@@ -1,0 +1,14 @@
+.card-game {
+    width: 100%;
+    &__actions {
+        display: grid;
+        place-content: center;
+        grid-template-columns: auto auto;
+        gap: 16px;
+    }
+    &__header-image {
+        background-image: url('https://target.scene7.com/is/image/Target/GUEST_20affc7e-e0d7-4eb6-a6f3-68d13520f8be?wid=488&hei=488&fmt=pjpeg');
+        background-size: cover;
+        background-position: center;
+      }
+}

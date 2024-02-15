@@ -1,0 +1,48 @@
+<mat-card class="card-game" *ngIf="game">
+  <mat-card-header>
+    <div mat-card-avatar class="card-game__header-image"></div>
+    <mat-card-subtitle>{{ game.date | date : "dd/MM/yyyy" }}</mat-card-subtitle>
+    <mat-card-title>{{ game.homeTeam.fullName }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="d-flex">
+      <div>
+        <p class="fw-bold me-2">Local:</p>
+      </div>
+      <div>
+        {{game.homeTeam.fullName}} <span class="fw-bold me-2">({{game.homeTeamScore}})</span>
+      </div>
+    </div>
+    <div class="d-flex">
+      <div>
+        <p class="fw-bold me-2">Visitante:</p>
+      </div>
+      <div>
+        {{game.visitorTeam.fullName}} <span class="fw-bold me-2">({{game.visitorTeamScore}})</span>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+  </mat-card-content>
+
+  <mat-card-actions class="card-game__actions">
+    <button
+      mat-icon-button
+      color="warn"
+      aria-label="Eliminar"
+      matTooltip="Eliminar"
+      (click)="onClickDeleteGame(game.id)"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      color="primary"
+      aria-label="Editar"
+      matTooltip="Editar"
+      (click)="onClickEditGame(game)"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>
