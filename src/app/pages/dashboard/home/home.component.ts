@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbaGamesService } from '../../../services/nba-games.service';
 import { ResponseGame } from '../../../shared/models/response-game';
 import { Game } from '../../../shared/models/game';
@@ -7,14 +7,16 @@ import { KeyLocalStore } from '../../../shared/constants/keys-local-store';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { ScreenPath } from '../../../shared/constants/page-path';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   listGames!: Game[];
+  unsubscribe$ = new Subject<void>();
 
   constructor(
     private readonly nbaGamesService: NbaGamesService,
@@ -36,10 +38,13 @@ export class HomeComponent implements OnInit {
   }
 
   getListGameFromApi() {
-    this.nbaGamesService.getGames().subscribe((responseGames: ResponseGame) => {
-      this.listGames = responseGames.data;
-      this.localStoreService.setItem(KeyLocalStore.listGame, this.listGames);
-    });
+    this.nbaGamesService
+      .getGames()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((responseGames: ResponseGame) => {
+        this.listGames = responseGames.data;
+        this.localStoreService.setItem(KeyLocalStore.listGame, this.listGames);
+      });
   }
 
   onClickDelete(idGame: number) {
@@ -54,7 +59,14 @@ export class HomeComponent implements OnInit {
   }
 
   onClickEdit(gameEdit: Game) {
-    this.localStoreService.setItem(KeyLocalStore.gameEdit,gameEdit);
-    this.router.navigate([`/${ScreenPath.Admin}/${ScreenPath.Game}/${ScreenPath.FormGame}`]);
+    this.localStoreService.setItem(KeyLocalStore.gameEdit, gameEdit);
+    this.router.navigate([
+      `/${ScreenPath.Admin}/${ScreenPath.Game}/${ScreenPath.FormGame}`,
+    ]);
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
